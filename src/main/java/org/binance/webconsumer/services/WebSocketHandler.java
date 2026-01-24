@@ -3,18 +3,16 @@ package org.binance.webconsumer.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.util.Date;
-
-@Service
 @Slf4j
+@AllArgsConstructor
 public class WebSocketHandler extends TextWebSocketHandler {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {

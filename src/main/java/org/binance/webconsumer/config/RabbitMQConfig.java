@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
@@ -43,10 +41,5 @@ public class RabbitMQConfig {
         log.info("Creating Binding: Queue '{}' -> Exchange '{}' with routing key '{}'",
                 queue, this.exchange, routingKey);
         return BindingBuilder.bind(queue).to(exchange).with(routingKey);
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
     }
 }

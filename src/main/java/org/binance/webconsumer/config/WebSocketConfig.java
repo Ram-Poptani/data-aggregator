@@ -10,33 +10,32 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.client.WebSocketConnectionManager;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Setter;
+
 import java.util.List;
 
 @Configuration
 @ConfigurationProperties(prefix = "binance")
+@Setter
 public class WebSocketConfig {
 
     private String webSocketUrl;
     private String apiKey = "";
     private List<String> symbols;
 
-    // Setters required for @ConfigurationProperties binding
-    public void setWebSocketUrl(String webSocketUrl) { this.webSocketUrl = webSocketUrl; }
-    public void setApiKey(String apiKey) { this.apiKey = apiKey; }
-    public void setSymbols(List<String> symbols) { this.symbols = symbols; }
-
     @Bean
-    public WebSocketConnectionManager binanceConnectionManager() {
+    public WebSocketConnectionManager binanceConnectionManager(ObjectMapper objectMapper) {
 
         WebSocketClient client = new StandardWebSocketClient();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-MBX-APIKEY", apiKey);
+        headers.add("X-MBX-APIKEY", this.apiKey);
 
         WebSocketConnectionManager manager = new WebSocketConnectionManager(
                 client,
-                new WebSocketHandler(),
-                webSocketUrl + "?streams=" + String.join("/", symbols)
+                new WebSocketHandler(objectMapper),
+                webSocketUrl + "?streams=" + String.join("/", this.symbols)
         );
 
         manager.setHeaders(headers);
