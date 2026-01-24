@@ -3,12 +3,11 @@ spring:
         name: WebConsumer
         debug: true
     rabbitmq:
-          host: puffin.rmq2.cloudamqp.com
-          port: 5672
-          username: htcdtztc
-          password: Ale4fZqeWyB0a3LkTXirce8yylWbz1hI
-          virtual-host: htcdtztc
-
+        host: puffin.rmq2.cloudamqp.com
+        port: 5672
+        username: htcdtztc
+        password: Ale4fZqeWyB0a3LkTXirce8yylWbz1hI
+        virtual-host: htcdtztc
 
 rabbit-mq:
     default:
@@ -16,3 +15,13 @@ rabbit-mq:
     pdf:
         queue: binance.webconsumer.queue
         routing-key: binance.webconsumer.key
+
+binance:
+    web-socket-url: "wss://fstream.binance.com/ws"
+#    api-key: "QZTuBoMggG2In5L7S9mDwtO1xaMvJHE7GG3Jkc1TWlDY4rGZtMiZbqTAHYxgMIuQ"
+    symbols:
+        - btcusdt@trade
+        - ethusdt@trade
+        - bnbusdt@trade
+        - xrpusdt@trade
+        - solusdt@trade
