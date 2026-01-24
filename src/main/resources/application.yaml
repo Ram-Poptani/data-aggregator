@@ -1,7 +1,8 @@
+debug: false
+
 spring:
     application:
         name: WebConsumer
-        debug: true
     rabbitmq:
         host: puffin.rmq2.cloudamqp.com
         port: 5672
@@ -12,9 +13,9 @@ spring:
 rabbit-mq:
     default:
         exchange: binance.webconsumer.exchange
-    pdf:
+    consumer:
         queue: binance.webconsumer.queue
-        routing-key: binance.webconsumer.key
+        routing-key: trade.key
 
 binance:
     web-socket-url: "wss://fstream.binance.com/ws"
