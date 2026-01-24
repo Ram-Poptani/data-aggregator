@@ -1,6 +1,7 @@
 package org.binance.webconsumer.config;
 
 
+import org.binance.webconsumer.services.RabbitMQService;
 import org.binance.webconsumer.services.WebSocketHandler;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +11,9 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.client.WebSocketConnectionManager;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -24,8 +26,14 @@ public class WebSocketConfig {
     private String apiKey = "";
     private List<String> symbols;
 
+    @Value("${rabbit-mq.consumer.routing-key:trade.key}")
+    private String routingKey;
+
     @Bean
-    public WebSocketConnectionManager binanceConnectionManager(ObjectMapper objectMapper) {
+    public WebSocketConnectionManager binanceConnectionManager(
+        JsonMapper jsonMapper, 
+        RabbitMQService rabbitMQService
+    ) {
 
         WebSocketClient client = new StandardWebSocketClient();
 
@@ -34,7 +42,7 @@ public class WebSocketConfig {
 
         WebSocketConnectionManager manager = new WebSocketConnectionManager(
                 client,
-                new WebSocketHandler(objectMapper),
+                new WebSocketHandler(jsonMapper, rabbitMQService, routingKey),
                 webSocketUrl + "?streams=" + String.join("/", this.symbols)
         );
 

@@ -1,9 +1,10 @@
 package org.binance.webconsumer.services;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -12,7 +13,9 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 @AllArgsConstructor
 public class WebSocketHandler extends TextWebSocketHandler {
 
-    private final ObjectMapper mapper;
+    private final JsonMapper mapper;
+    private final RabbitMQService rabbitMQService;
+    private final String routingKey;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -25,7 +28,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             TextMessage message) throws Exception {
 
         JsonNode json = mapper.readTree(message.getPayload());
-        log.info(json.toPrettyString());
+        rabbitMQService.sendMessage(routingKey, json.toString());
     }
 
     @Override

@@ -22,9 +22,9 @@ public class RabbitMQService {
 
     public void sendMessage(String exchange, String routingKey, Serializable message) {
         try {
-            log.info("Sending message to RabbitMQ - Exchange: {}, Routing Key: {}", exchange, routingKey);
+            log.debug("Sending message to RabbitMQ - Exchange: {}, Routing Key: {}", exchange, routingKey);
             rabbitTemplate.convertAndSend(exchange, routingKey, message);
-            log.info("Message sent successfully to exchange: {}, routingKey: {}", exchange, routingKey);
+            log.debug("Message sent successfully to exchange: {}, routingKey: {}", exchange, routingKey);
         } catch (Exception e) {
             // TODO: Catch specific exceptions related to RabbitMQ and add retry mechanism if needed
             log.error("Failed to send message to RabbitMQ - Exchange: {}, Routing Key: {}", exchange, routingKey, e);
