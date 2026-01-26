@@ -36,4 +36,15 @@ public class RabbitMQService {
         this.sendMessage(defaultExchange, routingKey, message);
     }
 
+    public void broadcastMessage(Serializable message) {
+        try {
+            log.debug("Broadcasting message to FanoutExchange: {}", defaultExchange);
+            rabbitTemplate.convertAndSend(defaultExchange, "", message);
+            log.debug("Message broadcast successfully");
+        } catch (Exception e) {
+            log.error("Failed to broadcast message", e);
+            throw new RuntimeException("Failed to broadcast message", e);
+        }
+    }
+
 }

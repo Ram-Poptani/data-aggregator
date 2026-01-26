@@ -12,17 +12,13 @@ spring:
 
 rabbit-mq:
     default:
-        exchange: binance.webconsumer.exchange
-    consumer:
-        queue: binance.webconsumer.queue
-        routing-key: trade.key
-
+        exchange: binance.trade.exchange
 binance:
     web-socket-url: "wss://fstream.binance.com/ws"
 #    api-key: "QZTuBoMggG2In5L7S9mDwtO1xaMvJHE7GG3Jkc1TWlDY4rGZtMiZbqTAHYxgMIuQ"
     symbols:
         - btcusdt@trade
-        - ethusdt@trade
-        - bnbusdt@trade
-        - xrpusdt@trade
-        - solusdt@trade
+#        - ethusdt@trade
+#        - bnbusdt@trade
+#        - xrpusdt@trade
+#        - solusdt@trade

@@ -1,9 +1,6 @@
 package org.binance.webconsumer.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,21 +22,10 @@ public class RabbitMQConfig {
 
 
     @Bean
-    public TopicExchange exchange() {
-        log.info("Creating TopicExchange: {}", exchange);
-        return new TopicExchange(exchange, true, false);
+    public FanoutExchange exchange() {
+        log.info("Creating RabbitMQ Exchange: {}", exchange);
+        return new FanoutExchange(exchange, true, false);
     }
 
-    @Bean
-    public Queue queue() {
-        log.info("Creating Queue: {}", queue);
-        return new Queue(queue, true, false, false);
-    }
 
-    @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
-        log.info("Creating Binding: Queue '{}' -> Exchange '{}' with routing key '{}'",
-                queue, this.exchange, routingKey);
-        return BindingBuilder.bind(queue).to(exchange).with(routingKey);
-    }
 }
