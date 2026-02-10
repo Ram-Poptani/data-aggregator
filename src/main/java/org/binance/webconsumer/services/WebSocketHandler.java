@@ -44,6 +44,17 @@ public class WebSocketHandler extends TextWebSocketHandler {
             TextMessage message) throws Exception {
 
         JsonNode json = mapper.readTree(message.getPayload());
+
+
+        JsonNode tradeData = json.get("data");
+        JsonNode trade = (tradeData != null) ? tradeData : json;
+        double price = trade.path("p").asDouble(0);
+        double quantity = trade.path("q").asDouble(0);
+        if (price <= 0 || quantity <= 0) {
+            return;
+        }
+
+
         rabbitMQService.sendMessage(routingKey, json.toString());
         tradesReceivedCounter.increment();
     }
