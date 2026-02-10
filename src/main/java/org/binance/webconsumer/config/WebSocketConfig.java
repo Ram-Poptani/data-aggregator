@@ -1,6 +1,7 @@
 package org.binance.webconsumer.config;
 
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.binance.webconsumer.services.RabbitMQService;
 import org.binance.webconsumer.services.WebSocketHandler;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,7 +33,8 @@ public class WebSocketConfig {
     @Bean
     public WebSocketConnectionManager binanceConnectionManager(
         JsonMapper jsonMapper, 
-        RabbitMQService rabbitMQService
+        RabbitMQService rabbitMQService,
+        MeterRegistry meterRegistry
     ) {
 
         WebSocketClient client = new StandardWebSocketClient();
@@ -42,7 +44,7 @@ public class WebSocketConfig {
 
         WebSocketConnectionManager manager = new WebSocketConnectionManager(
                 client,
-                new WebSocketHandler(jsonMapper, rabbitMQService, routingKey),
+                new WebSocketHandler(jsonMapper, rabbitMQService, routingKey, meterRegistry),
                 webSocketUrl + "?streams=" + String.join("/", this.symbols)
         );
 

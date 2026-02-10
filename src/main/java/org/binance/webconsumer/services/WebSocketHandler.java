@@ -1,6 +1,8 @@
 package org.binance.webconsumer.services;
 
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.AllArgsConstructor;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
@@ -10,12 +12,26 @@ import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Slf4j
-@AllArgsConstructor
 public class WebSocketHandler extends TextWebSocketHandler {
 
     private final JsonMapper mapper;
     private final RabbitMQService rabbitMQService;
     private final String routingKey;
+    private final Counter tradesReceivedCounter;
+
+    public WebSocketHandler(
+            JsonMapper mapper,
+            RabbitMQService rabbitMQService,
+            String routingKey,
+            MeterRegistry meterRegistry
+    ) {
+        this.mapper = mapper;
+        this.rabbitMQService = rabbitMQService;
+        this.routingKey = routingKey;
+        this.tradesReceivedCounter = Counter.builder("binance.trades.received")
+                .description("Total trades received from Binance WebSocket")
+                .register(meterRegistry);
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -29,6 +45,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         JsonNode json = mapper.readTree(message.getPayload());
         rabbitMQService.sendMessage(routingKey, json.toString());
+        tradesReceivedCounter.increment();
     }
 
     @Override
