@@ -55,7 +55,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
 
 
-        rabbitMQService.sendMessage(routingKey, json.toString());
+        rabbitMQService.sendMessage(routingKey, trade.toString());
         tradesReceivedCounter.increment();
     }
 
