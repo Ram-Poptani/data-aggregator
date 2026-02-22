@@ -5,18 +5,18 @@ spring:
     application:
         name: WebConsumer
     rabbitmq:
-        host: puffin.rmq2.cloudamqp.com
-        port: 5672
-        username: htcdtztc
-        password: Ale4fZqeWyB0a3LkTXirce8yylWbz1hI
-        virtual-host: htcdtztc
+        host: ${RABBITMQ_HOST:localhost}
+        port: ${RABBITMQ_PORT:5672}
+        username: ${RABBITMQ_USERNAME:guest}
+        password: ${RABBITMQ_PASSWORD:guest}
+        virtual-host: ${RABBITMQ_VHOST:/}
 
 rabbit-mq:
     default:
         exchange: binance.trade.exchange
 binance:
-    web-socket-url: "wss://fstream.binance.com/ws"
-#    api-key: "QZTuBoMggG2In5L7S9mDwtO1xaMvJHE7GG3Jkc1TWlDY4rGZtMiZbqTAHYxgMIuQ"
+    web-socket-url: ${BINANCE_WS_URL:wss://fstream.binance.com/ws}
+    api-key: ${BINANCE_API_KEY:}
     symbols:
         - btcusdt@trade
 #        - ethusdt@trade
