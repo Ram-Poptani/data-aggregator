@@ -17,7 +17,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final JsonMapper mapper;
     private final RabbitMQService rabbitMQService;
     private final String routingKey;
+
+//    Metrics
     private final Counter tradesReceivedCounter;
+    private final Counter wsErrorsCounter;
+
+    private final Counter invalidMessagesCounter;
 
     public WebSocketHandler(
             JsonMapper mapper,
@@ -30,6 +35,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         this.routingKey = routingKey;
         this.tradesReceivedCounter = Counter.builder("binance.trades.received")
                 .description("Total trades received from Binance WebSocket")
+                .register(meterRegistry);
+        wsErrorsCounter = Counter.builder("binance.websocket.errors")
+                .description("Total errors encountered in WebSocket handling")
+                .register(meterRegistry);
+        invalidMessagesCounter = Counter.builder("binance.trades.invalid")
+                .description("Total trades invalid in WebSocket handling")
                 .register(meterRegistry);
     }
 
@@ -51,9 +62,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         double price = trade.path("p").asDouble(0);
         double quantity = trade.path("q").asDouble(0);
         if (price <= 0 || quantity <= 0) {
+            this.invalidMessagesCounter.increment();
             return;
         }
-
 
         rabbitMQService.sendMessage(routingKey, trade.toString());
         tradesReceivedCounter.increment();
@@ -63,6 +74,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void handleTransportError(
             WebSocketSession session,
             Throwable exception) {
+        this.wsErrorsCounter.increment();
         log.error("Error: " + exception.getMessage());
     }
 
